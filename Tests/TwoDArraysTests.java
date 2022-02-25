@@ -39,8 +39,6 @@ public class TwoDArraysTests {
         int[][] arr = {{-21, -4, -89}, {-65, -33, -1}, {-8, -3, -99}, {-2, -3, -1}};
         assertEquals(-1, TwoDArrays.maxValue(arr));
     }
-
-    /*
     @Test
     public void squareArrayTest() {
         int[][] expected2 = new int[][] {{0, 1}, { 2, 1}};
@@ -50,8 +48,4 @@ public class TwoDArraysTests {
         assertArrayEquals(expected3, TwoDArrays.squareArray(3));
         assertArrayEquals(expected4, TwoDArrays.squareArray(4));
     }
-
-     */
-
-
 }

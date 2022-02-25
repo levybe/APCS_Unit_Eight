@@ -22,12 +22,13 @@ public class TwoDArrays {
         return count;
     }
 
-    /*
     public static int[][] squareArray(int num) {
-
+        int[][] arr = new int[num][num];
+        for (int a = 1; a <= arr.length; a++) {
+            for (int b = arr[0].length - 1; b >= a - 1; b--) {
+                arr[a - 1][b] = 0; // Not 0, need to put some more math.
+            }
+        }
+        return arr;
     }
-
-     */
-
-
 }
