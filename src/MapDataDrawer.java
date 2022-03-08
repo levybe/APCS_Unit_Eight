@@ -67,9 +67,11 @@ public class MapDataDrawer
      * Colors should be grayscale values 0-255, scaled based on min/max values in grid
      */
     public void drawMap(Graphics g){
+        int max = findMaxValue();
+        int min = findMinValue();
         for (int a = 0; a < grid.length; a++) {
             for (int b = 0; b <grid[0].length; b++) {
-                int color = (int) (grid[a][b] - findMinValue()) / ((findMaxValue() - findMinValue()) * 255);
+                int color = (int) (((double) (grid[a][b] - min) / (max - min)) * 255);
                 // The code above does not work, but the correct code is something similar to it.
                 g.setColor(new Color(color, color, color));
                 g.fillRect(b, a, 1, 1);
@@ -83,6 +85,54 @@ public class MapDataDrawer
      * @return the total change in elevation traveled from West-to-East
      */
     public int drawLowestElevPath(Graphics g, int row){
+        g.setColor(Color.red);
+        g.fillRect(0, row, 1, 1);
+        int currentRow = row;
+        for (int i = 0; i < grid[0].length; i++) {
+            int upPathChange = 9001;
+            int midPathChange = grid[currentRow][i] - grid[currentRow][i + 1];
+            if (midPathChange < 0) {
+                midPathChange = midPathChange * -1;
+            }
+            int lowPathChange = 9001;
+            if (currentRow == 0) {
+                lowPathChange = grid[currentRow][i] - grid[currentRow + 1][i + 1];
+                if (lowPathChange < 0) {
+                    lowPathChange = lowPathChange * -1;
+                }
+            }
+            else if (currentRow == grid.length - 1) {
+                upPathChange = grid[currentRow][i] - grid[currentRow - 1][i + 1];
+                if (upPathChange < 0) {
+                    upPathChange = upPathChange * -1;
+                }
+            }
+            else {
+                upPathChange = grid[currentRow][i] - grid[currentRow - 1][i + 1];
+                if (upPathChange < 0) {
+                    upPathChange = upPathChange * -1;
+                }
+                lowPathChange = grid[currentRow][i] - grid[currentRow + 1][i + 1];
+                if (lowPathChange < 0) {
+                    lowPathChange = lowPathChange * -1;
+                }
+            }
+            if (upPathChange < midPathChange && upPathChange < lowPathChange) { // If the upper change is less than all others
+                // Move up
+            }
+            else if (midPathChange < upPathChange && midPathChange < lowPathChange) { // If the middle change is less than all others
+                // Move straight
+            }
+            else if (lowPathChange < upPathChange && lowPathChange < midPathChange) { // If the lower change is less than all others
+                // Move down
+            }
+            else if (midPathChange == upPathChange || midPathChange == lowPathChange) {
+                // Move straight
+            }
+            else {
+                // Flip a coin, move in whichever direction is randomly decided
+            }
+        }
         return -1;
     }
 
