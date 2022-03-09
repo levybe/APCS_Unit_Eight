@@ -88,52 +88,60 @@ public class MapDataDrawer
         g.setColor(Color.red);
         g.fillRect(0, row, 1, 1);
         int currentRow = row;
+        int totalChange = 0;
         for (int i = 0; i < grid[0].length; i++) {
             int upPathChange = 9001;
-            int midPathChange = grid[currentRow][i] - grid[currentRow][i + 1];
-            if (midPathChange < 0) {
-                midPathChange = midPathChange * -1;
-            }
+            int midPathChange = Math.abs(grid[currentRow][i] - grid[currentRow][i + 1]);
             int lowPathChange = 9001;
             if (currentRow == 0) {
-                lowPathChange = grid[currentRow][i] - grid[currentRow + 1][i + 1];
-                if (lowPathChange < 0) {
-                    lowPathChange = lowPathChange * -1;
-                }
+                lowPathChange = Math.abs(grid[currentRow][i] - grid[currentRow + 1][i + 1]);
             }
             else if (currentRow == grid.length - 1) {
-                upPathChange = grid[currentRow][i] - grid[currentRow - 1][i + 1];
-                if (upPathChange < 0) {
-                    upPathChange = upPathChange * -1;
-                }
+                upPathChange = Math.abs(grid[currentRow][i] - grid[currentRow - 1][i + 1]);
             }
             else {
-                upPathChange = grid[currentRow][i] - grid[currentRow - 1][i + 1];
-                if (upPathChange < 0) {
-                    upPathChange = upPathChange * -1;
-                }
-                lowPathChange = grid[currentRow][i] - grid[currentRow + 1][i + 1];
-                if (lowPathChange < 0) {
-                    lowPathChange = lowPathChange * -1;
-                }
+                upPathChange = Math.abs(grid[currentRow][i] - grid[currentRow - 1][i + 1]);
+                lowPathChange = Math.abs(grid[currentRow][i] - grid[currentRow + 1][i + 1]);
             }
             if (upPathChange < midPathChange && upPathChange < lowPathChange) { // If the upper change is less than all others
                 // Move up
+                currentRow -= 1;
+                g.fillRect(i + 1, currentRow, 1, 1);
+                totalChange += upPathChange;
             }
             else if (midPathChange < upPathChange && midPathChange < lowPathChange) { // If the middle change is less than all others
                 // Move straight
+                g.fillRect(i + 1, currentRow, 1, 1);
+                totalChange += midPathChange;
             }
             else if (lowPathChange < upPathChange && lowPathChange < midPathChange) { // If the lower change is less than all others
                 // Move down
+                currentRow += 1;
+                g.fillRect(i + 1, currentRow, 1, 1);
+                totalChange += lowPathChange;
             }
             else if (midPathChange == upPathChange || midPathChange == lowPathChange) {
                 // Move straight
+                g.fillRect(i + 1, currentRow, 1, 1);
+                totalChange += midPathChange;
             }
             else {
                 // Flip a coin, move in whichever direction is randomly decided
+                if (Math.random() >= 0.5) {
+                    // Move up
+                    currentRow -= 1;
+                    g.fillRect(i + 1, currentRow, 1, 1);
+                    totalChange += upPathChange;
+                }
+                else {
+                    // Move down
+                    currentRow += 1;
+                    g.fillRect(i + 1, currentRow, 1, 1);
+                    totalChange += lowPathChange;
+                }
             }
         }
-        return -1;
+        return totalChange;
     }
 
     /**
