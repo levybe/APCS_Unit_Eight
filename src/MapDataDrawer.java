@@ -56,7 +56,7 @@ public class MapDataDrawer
         int lowest = grid[0][col];
         for (int a = 1; a < grid.length; a++) {
             if (grid[a][col] < lowest) {
-                lowest = grid[a][col];
+                lowest = a;
             }
         }
         return lowest;
@@ -85,58 +85,57 @@ public class MapDataDrawer
      * @return the total change in elevation traveled from West-to-East
      */
     public int drawLowestElevPath(Graphics g, int row){
-        g.setColor(Color.red);
         g.fillRect(0, row, 1, 1);
         int currentRow = row;
-        int totalChange = 0;
-        for (int i = 0; i < grid[0].length; i++) {
+        int totalChange = 0; // Contains the total elevation change throughout the route.
+        for (int i = 1; i < grid[0].length; i++) {
             int upPathChange = 9001;
-            int midPathChange = Math.abs(grid[currentRow][i] - grid[currentRow][i + 1]);
+            int midPathChange = Math.abs(grid[currentRow][i - 1] - grid[currentRow][i]);
             int lowPathChange = 9001;
             if (currentRow == 0) {
-                lowPathChange = Math.abs(grid[currentRow][i] - grid[currentRow + 1][i + 1]);
+                lowPathChange = Math.abs(grid[currentRow][i - 1] - grid[currentRow + 1][i]);
             }
             else if (currentRow == grid.length - 1) {
-                upPathChange = Math.abs(grid[currentRow][i] - grid[currentRow - 1][i + 1]);
+                upPathChange = Math.abs(grid[currentRow][i - 1] - grid[currentRow - 1][i]);
             }
             else {
-                upPathChange = Math.abs(grid[currentRow][i] - grid[currentRow - 1][i + 1]);
-                lowPathChange = Math.abs(grid[currentRow][i] - grid[currentRow + 1][i + 1]);
+                upPathChange = Math.abs(grid[currentRow][i - 1] - grid[currentRow - 1][i]);
+                lowPathChange = Math.abs(grid[currentRow][i - 1] - grid[currentRow + 1][i]);
             }
             if (upPathChange < midPathChange && upPathChange < lowPathChange) { // If the upper change is less than all others
                 // Move up
                 currentRow -= 1;
-                g.fillRect(i + 1, currentRow, 1, 1);
+                g.fillRect(i, currentRow, 1, 1);
                 totalChange += upPathChange;
             }
             else if (midPathChange < upPathChange && midPathChange < lowPathChange) { // If the middle change is less than all others
                 // Move straight
-                g.fillRect(i + 1, currentRow, 1, 1);
+                g.fillRect(i, currentRow, 1, 1);
                 totalChange += midPathChange;
             }
             else if (lowPathChange < upPathChange && lowPathChange < midPathChange) { // If the lower change is less than all others
                 // Move down
                 currentRow += 1;
-                g.fillRect(i + 1, currentRow, 1, 1);
+                g.fillRect(i, currentRow, 1, 1);
                 totalChange += lowPathChange;
             }
             else if (midPathChange == upPathChange || midPathChange == lowPathChange) {
                 // Move straight
-                g.fillRect(i + 1, currentRow, 1, 1);
+                g.fillRect(i, currentRow, 1, 1);
                 totalChange += midPathChange;
             }
             else {
                 // Flip a coin, move in whichever direction is randomly decided
-                if (Math.random() >= 0.5) {
+                if ((int) (Math.random() * 2) + 1 == 2) {
                     // Move up
                     currentRow -= 1;
-                    g.fillRect(i + 1, currentRow, 1, 1);
+                    g.fillRect(i, currentRow, 1, 1);
                     totalChange += upPathChange;
                 }
                 else {
                     // Move down
                     currentRow += 1;
-                    g.fillRect(i + 1, currentRow, 1, 1);
+                    g.fillRect(i, currentRow, 1, 1);
                     totalChange += lowPathChange;
                 }
             }
@@ -148,7 +147,16 @@ public class MapDataDrawer
      * @return the index of the starting row for the lowest-elevation-change path in the entire grid.
      */
     public int indexOfLowestElevPath(Graphics g){
-        return -1;
+        int rowWithSmallestChange = 0;
+        int smallestChange = Integer.MAX_VALUE;
+        for (int row = 0; row < grid.length; row++) {
+            int change = drawLowestElevPath(g, row);
+            if (change < smallestChange) {
+                smallestChange = change;
+                rowWithSmallestChange = row;
+            }
+        }
+        return rowWithSmallestChange;
 
     }
 
